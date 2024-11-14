@@ -9,6 +9,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * DataLoader is a component that initializes the database with some initial account data
+ * if no accounts are found in the repository.
+ */
 @Component
 @RequiredArgsConstructor
 public class DataLoader implements CommandLineRunner {

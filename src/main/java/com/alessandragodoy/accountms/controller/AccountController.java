@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Controller for managing accounts.
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/accounts")

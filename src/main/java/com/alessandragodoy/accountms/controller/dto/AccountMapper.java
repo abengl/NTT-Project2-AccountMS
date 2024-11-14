@@ -3,6 +3,9 @@ package com.alessandragodoy.accountms.controller.dto;
 import com.alessandragodoy.accountms.model.entity.Account;
 import com.alessandragodoy.accountms.model.entity.AccountType;
 
+/**
+ * Mapper class for converting between Account entities and DTOs.
+ */
 public class AccountMapper {
 	public static AccountDTO toDTO(Account account) {
 		return new AccountDTO(

@@ -21,6 +21,9 @@ import javax.validation.ValidationException;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementation of the AccountService interface.
+ */
 @Service
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
@@ -31,11 +34,7 @@ public class AccountServiceImpl implements AccountService {
 	@Value("${customer.ms.url}")
 	private String customerMsUrl;
 
-	@Override
-	public boolean accountExists(Integer customerId) {
-		return accountRepository.existsByCustomerId(customerId);
-	}
-
+	/* Account Service methods */
 	@Override
 	public List<AccountDTO> getAllAccounts() {
 		return accountRepository.findAll().stream().map(AccountMapper::toDTO).toList();
@@ -47,6 +46,11 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
+	public boolean accountExists(Integer customerId) {
+		return accountRepository.existsByCustomerId(customerId);
+	}
+
+	@Override
 	public AccountDTO createAccount(CreateAccountDTO createAccountDTO) {
 		if (!customerExists(createAccountDTO.customerId())) {
 			throw new ValidationException("Customer not found for ID: " + createAccountDTO.customerId());
@@ -55,23 +59,6 @@ public class AccountServiceImpl implements AccountService {
 		newAccount.setAccountNumber(generateAccountNumber());
 		accountRepository.save(newAccount);
 		return AccountMapper.toDTO(newAccount);
-	}
-
-	private boolean customerExists(Integer customerId) {
-		String url = customerMsUrl + "/" + customerId;
-		try {
-			ResponseEntity<Boolean> response = restTemplate.getForEntity(url, Boolean.class);
-			if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-				return response.getBody();
-			}
-		} catch (Exception e) {
-			System.out.println("Error calling customer-ms: " + e.getMessage());
-		}
-		throw new CustomerNotFoundException("Customer not found for ID: " + customerId);
-	}
-
-	private String generateAccountNumber() {
-		return "A" + (System.currentTimeMillis() / 100);
 	}
 
 	@Transactional
@@ -105,6 +92,25 @@ public class AccountServiceImpl implements AccountService {
 			accountRepository.delete(existingAccount);
 			return AccountMapper.toDTO(existingAccount);
 		});
+	}
+
+
+	/* Helper methods */
+	private boolean customerExists(Integer customerId) {
+		String url = customerMsUrl + "/" + customerId;
+		try {
+			ResponseEntity<Boolean> response = restTemplate.getForEntity(url, Boolean.class);
+			if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+				return response.getBody();
+			}
+		} catch (Exception e) {
+			System.out.println("Error calling customer-ms: " + e.getMessage());
+		}
+		throw new CustomerNotFoundException("Customer not found for ID: " + customerId);
+	}
+
+	private String generateAccountNumber() {
+		return "A" + (System.currentTimeMillis() / 100);
 	}
 
 	private void validateSufficientFunds(Account account, Double currentBalance, Double amount) {
