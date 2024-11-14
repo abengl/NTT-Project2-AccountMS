@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Integer> {
+	boolean existsByCustomerId(Integer customerId);
+
 	@Modifying
 	@Query("UPDATE Account a SET a.balance = a.balance + :amount WHERE a.accountId = :accountId")
 	void updateBalanceDeposit(@Param("accountId") Integer accountId, @Param("amount") Double amount);

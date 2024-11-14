@@ -11,8 +11,12 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<String> handleInsufficientFundsException(InsufficientFundsException e) {
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
 	}
-	@ExceptionHandler(AccountNotFoundException.class)
-	public ResponseEntity<String> handleAccountNotFoundException(AccountNotFoundException e) {
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<String> handleGeneralException(Exception e) {
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred. " + e.getMessage());
+	}
+	@ExceptionHandler(CustomerNotFoundException.class)
+	public ResponseEntity<String> handleCustomerNotFoundException(CustomerNotFoundException e) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 	}
 }

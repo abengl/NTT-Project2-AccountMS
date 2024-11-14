@@ -4,6 +4,7 @@ import com.alessandragodoy.accountms.controller.dto.AccountDTO;
 import com.alessandragodoy.accountms.controller.dto.AccountMapper;
 import com.alessandragodoy.accountms.controller.dto.CreateAccountDTO;
 import com.alessandragodoy.accountms.exception.AccountNotFoundException;
+import com.alessandragodoy.accountms.exception.CustomerNotFoundException;
 import com.alessandragodoy.accountms.exception.InsufficientFundsException;
 import com.alessandragodoy.accountms.model.entity.Account;
 import com.alessandragodoy.accountms.model.entity.AccountType;
@@ -11,7 +12,10 @@ import com.alessandragodoy.accountms.repository.AccountRepository;
 import com.alessandragodoy.accountms.service.AccountService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.validation.ValidationException;
 import java.util.List;
@@ -22,6 +26,15 @@ import java.util.Optional;
 public class AccountServiceImpl implements AccountService {
 
 	private final AccountRepository accountRepository;
+	private final RestTemplate restTemplate;
+
+	@Value("${customer.ms.url}")
+	private String customerMsUrl;
+
+	@Override
+	public boolean accountExists(Integer customerId) {
+		return accountRepository.existsByCustomerId(customerId);
+	}
 
 	@Override
 	public List<AccountDTO> getAllAccounts() {
@@ -35,10 +48,26 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public AccountDTO createAccount(CreateAccountDTO createAccountDTO) {
+		if (!customerExists(createAccountDTO.customerId())) {
+			throw new ValidationException("Customer not found for ID: " + createAccountDTO.customerId());
+		}
 		Account newAccount = AccountMapper.toCreateEntity(createAccountDTO);
 		newAccount.setAccountNumber(generateAccountNumber());
 		accountRepository.save(newAccount);
 		return AccountMapper.toDTO(newAccount);
+	}
+
+	private boolean customerExists(Integer customerId) {
+		String url = customerMsUrl + "/" + customerId;
+		try {
+			ResponseEntity<Boolean> response = restTemplate.getForEntity(url, Boolean.class);
+			if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+				return response.getBody();
+			}
+		} catch (Exception e) {
+			System.out.println("Error calling customer-ms: " + e.getMessage());
+		}
+		throw new CustomerNotFoundException("Customer not found for ID: " + customerId);
 	}
 
 	private String generateAccountNumber() {
@@ -78,6 +107,15 @@ public class AccountServiceImpl implements AccountService {
 		});
 	}
 
+	private void validateSufficientFunds(Account account, Double currentBalance, Double amount) {
+		if (account.getAccountType() == AccountType.SAVINGS && currentBalance < amount) {
+			throw new InsufficientFundsException("Insufficient funds for withdrawal.");
+		} else if (account.getAccountType() == AccountType.CHECKING && currentBalance - amount < -500) {
+			throw new InsufficientFundsException("Insufficient funds for withdrawal. Account overdraft limit reached" +
+					".");
+		}
+	}
+
 	private void validateAmount(Double amount) {
 		if (amount == null || amount <= 0) {
 			throw new ValidationException("Amount must be greater than zero.");
@@ -87,13 +125,5 @@ public class AccountServiceImpl implements AccountService {
 	private Account findAccountByIdOrThrow(Integer accountId) {
 		return accountRepository.findById(accountId)
 				.orElseThrow(() -> new AccountNotFoundException("Account not found for ID: " + accountId));
-	}
-
-	private void validateSufficientFunds(Account account, Double currentBalance, Double amount) {
-		if (account.getAccountType() == AccountType.SAVINGS && currentBalance < amount) {
-			throw new InsufficientFundsException("Insufficient funds for withdrawal.");
-		} else if (account.getAccountType() == AccountType.CHECKING && currentBalance - amount < -500) {
-			throw new InsufficientFundsException("Insufficient funds for withdrawal. Account overdraft limit reached.");
-		}
 	}
 }

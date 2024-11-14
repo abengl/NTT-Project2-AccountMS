@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/accounts")
+@RequestMapping("/api/accounts")
 public class AccountController {
 	private final AccountService accountService;
 
@@ -28,6 +28,11 @@ public class AccountController {
 	public ResponseEntity<?> getAccountById(@PathVariable Integer accountId) {
 		Optional<AccountDTO> account = accountService.getAccountById(accountId);
 		return account.isPresent() ? ResponseEntity.ok(account.get()) : ResponseEntity.notFound().build();
+	}
+
+	@GetMapping("/customer/{customerId}")
+	public boolean getAccountByCustomerId(@PathVariable Integer customerId) {
+		return accountService.accountExists(customerId);
 	}
 
 	@PostMapping

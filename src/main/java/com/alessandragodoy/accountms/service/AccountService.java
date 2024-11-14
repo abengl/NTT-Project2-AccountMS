@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AccountService {
+	boolean accountExists(Integer customerId);
 	List<AccountDTO> getAllAccounts();
 	Optional<AccountDTO> getAccountById(Integer accountId);
 	AccountDTO createAccount(CreateAccountDTO createAccountDTO);
 	Optional<AccountDTO> deposit(Integer accountId, Double amount);
 	Optional<AccountDTO> withdraw(Integer accountId, Double amount);
 	Optional<AccountDTO> deleteAccountById(Integer accountId);
-
 }
