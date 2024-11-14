@@ -22,9 +22,9 @@ The Account microservice is a standalone module within a broader banking system.
 - **Postman**: Used for API testing with a pre-configured collection for CRUD operations.
 
 ## UML Diagrams
-The following UML diagrams illustrate the architecture and data flow of the Customer Microservice:
+The following UML diagrams illustrate the architecture and data flow of the Account Microservice:
 
-- **Sequence Diagram**: Details the typical flow of operations between the Customer and [Account microservices](https://github.com/abengl/NTT-Project2-AccountMS).
+- **Sequence Diagram**: Details the typical flow of operations between the Account and [Customer microservices](https://github.com/abengl/NTT-Project2-CustomerMS).
   <img alt="UML sequence diagram" src="https://github.com/abengl/NTT-Project2-AccountMS/blob/a3ccfe7ae3fad6d2d667ecc89dded8d9d2906986/src/main/resources/static/UML_Sequence_Diagram2_Microservices.png" width="500" height="500">
 - **Component Diagram**: Show the overall architecture of the microservices.
     <img alt="UML sequence diagram" src="https://github.com/abengl/NTT-Project2-AccountMS/blob/a3ccfe7ae3fad6d2d667ecc89dded8d9d2906986/src/main/resources/static/UML_Component_Diagram_Microservices.png" width="800" height="500">
