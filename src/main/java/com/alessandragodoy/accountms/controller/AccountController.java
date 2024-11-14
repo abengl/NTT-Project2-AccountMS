@@ -5,6 +5,7 @@ import com.alessandragodoy.accountms.controller.dto.CreateAccountDTO;
 import com.alessandragodoy.accountms.controller.dto.DepositRequestDTO;
 import com.alessandragodoy.accountms.controller.dto.WithdrawalRequestDTO;
 import com.alessandragodoy.accountms.service.AccountService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/accounts")
+@Tag(name = "Accounts", description = "Controller for Account")
 public class AccountController {
 	private final AccountService accountService;
 
