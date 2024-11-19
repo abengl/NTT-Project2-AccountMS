@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 /**
  * Repository interface for Account entity.
  */
@@ -49,4 +51,8 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
 	 */
 	@Query("SELECT a.balance FROM Account a WHERE a.accountId = :accountId")
 	Double getBalanceByAccountId(@Param("accountId") Integer accountId);
+
+	Optional<Account> findByAccountNumber(String accountNumber);
+
+	boolean existsByAccountNumber(String accountNumber);
 }

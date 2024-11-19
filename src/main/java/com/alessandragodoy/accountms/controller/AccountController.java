@@ -69,4 +69,21 @@ public class AccountController {
 				ResponseEntity.notFound().build();
 	}
 
+	@GetMapping("/balance/{accountNumber}")
+	public ResponseEntity<Double> getAccountBalance(@PathVariable String accountNumber) {
+		Optional<Double> balance = accountService.getAccountBalance(accountNumber);
+		return ResponseEntity.ok(balance.get());
+	}
+	@GetMapping("/verify/{accountNumber}")
+	public ResponseEntity<Boolean> verifyAccountByAccountNumber(@PathVariable String accountNumber) {
+		boolean exists = accountService.accountExistsByAccountNumber(accountNumber);
+		return ResponseEntity.ok(exists);
+	}
+
+	@PatchMapping("/update/{accountNumber}")
+	public ResponseEntity<Void> updateBalanceByAccountNumber(@PathVariable String accountNumber, @RequestParam Double amount) {
+		accountService.updateBalanceByAccountNumber(accountNumber, amount);
+		return ResponseEntity.ok().build();
+	}
+
 }

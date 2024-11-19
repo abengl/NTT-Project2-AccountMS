@@ -66,4 +66,10 @@ public interface AccountService {
 	 * @return an optional containing the deleted account DTO if the account is found, or empty if not found
 	 */
 	Optional<AccountDTO> deleteAccountById(Integer accountId);
+
+	Optional<Double> getAccountBalance(String accountNumber);
+
+	boolean accountExistsByAccountNumber(String accountNumber);
+
+	void updateBalanceByAccountNumber(String accountNumber, Double amount);
 }

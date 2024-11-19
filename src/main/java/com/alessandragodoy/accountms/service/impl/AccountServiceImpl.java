@@ -132,4 +132,22 @@ public class AccountServiceImpl implements AccountService {
 		return accountRepository.findById(accountId)
 				.orElseThrow(() -> new AccountNotFoundException("Account not found for ID: " + accountId));
 	}
+
+	@Override
+	public Optional<Double> getAccountBalance(String accountNumber) {
+		return accountRepository.findByAccountNumber(accountNumber).map(Account::getBalance);
+	}
+
+	@Override
+	public boolean accountExistsByAccountNumber(String accountNumber) {
+		return accountRepository.existsByAccountNumber(accountNumber);
+	}
+
+	@Override
+	public void updateBalanceByAccountNumber(String accountNumber, Double amount) {
+		Account account = accountRepository.findByAccountNumber(accountNumber)
+				.orElseThrow(() -> new AccountNotFoundException("Account not found for number: " + accountNumber));
+		account.setBalance(account.getBalance() + amount);
+		accountRepository.save(account);
+	}
 }
