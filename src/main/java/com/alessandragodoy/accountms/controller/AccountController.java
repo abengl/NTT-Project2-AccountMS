@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Controller for managing accounts.
@@ -24,15 +23,15 @@ public class AccountController {
 	private final AccountService accountService;
 
 	@GetMapping
-	public ResponseEntity<?> getAllAccounts() {
+	public ResponseEntity<List<AccountDTO>> getAllAccounts() {
 		List<AccountDTO> accounts = accountService.getAllAccounts();
 		return ResponseEntity.ok(accounts);
 	}
 
 	@GetMapping("/{accountId}")
-	public ResponseEntity<?> getAccountById(@PathVariable Integer accountId) {
-		Optional<AccountDTO> account = accountService.getAccountById(accountId);
-		return account.isPresent() ? ResponseEntity.ok(account.get()) : ResponseEntity.notFound().build();
+	public ResponseEntity<AccountDTO> getAccountById(@PathVariable Integer accountId) {
+		AccountDTO account = accountService.getAccountById(accountId);
+		return ResponseEntity.ok(account);
 	}
 
 	@GetMapping("/customer/{customerId}")
@@ -41,38 +40,35 @@ public class AccountController {
 	}
 
 	@PostMapping
-	public ResponseEntity<?> createAccount(@RequestBody CreateAccountDTO createAccountDTO) {
+	public ResponseEntity<AccountDTO> createAccount(@RequestBody CreateAccountDTO createAccountDTO) {
 		AccountDTO account = accountService.createAccount(createAccountDTO);
 		return ResponseEntity.ok(account);
 	}
 
 	@PutMapping("/{accountId}/deposit")
-	public ResponseEntity<?> deposit(@PathVariable Integer accountId,
+	public ResponseEntity<AccountDTO> deposit(@PathVariable Integer accountId,
 									 @RequestBody DepositRequestDTO depositRequestDTO) {
-		Optional<AccountDTO> updatedAccount = accountService.deposit(accountId, depositRequestDTO.amount());
-		return updatedAccount.isPresent() ? ResponseEntity.ok(updatedAccount.get()) :
-				ResponseEntity.notFound().build();
+		AccountDTO updatedAccount = accountService.deposit(accountId, depositRequestDTO.amount());
+		return ResponseEntity.ok(updatedAccount);
 	}
 
 	@PutMapping("/{accountId}/withdraw")
-	public ResponseEntity<?> withdraw(@PathVariable Integer accountId,
+	public ResponseEntity<AccountDTO> withdraw(@PathVariable Integer accountId,
 									  @RequestBody WithdrawalRequestDTO withdrawalRequestDTO) {
-		Optional<AccountDTO> updatedAccount = accountService.withdraw(accountId, withdrawalRequestDTO.amount());
-		return updatedAccount.isPresent() ? ResponseEntity.ok(updatedAccount.get()) :
-				ResponseEntity.notFound().build();
+		AccountDTO updatedAccount = accountService.withdraw(accountId, withdrawalRequestDTO.amount());
+		return ResponseEntity.ok(updatedAccount);
 	}
 
 	@DeleteMapping("/{accountId}")
-	public ResponseEntity<?> deleteAccountById(@PathVariable Integer accountId) {
-		Optional<AccountDTO> deletedAccount = accountService.deleteAccountById(accountId);
-		return deletedAccount.isPresent() ? ResponseEntity.ok(deletedAccount.get()) :
-				ResponseEntity.notFound().build();
+	public ResponseEntity<AccountDTO> deleteAccountById(@PathVariable Integer accountId) {
+		AccountDTO deletedAccount = accountService.deleteAccountById(accountId);
+		return ResponseEntity.ok(deletedAccount);
 	}
 
 	@GetMapping("/balance/{accountNumber}")
 	public ResponseEntity<Double> getAccountBalance(@PathVariable String accountNumber) {
-		Optional<Double> balance = accountService.getAccountBalance(accountNumber);
-		return ResponseEntity.ok(balance.get());
+		Double balance = accountService.getAccountBalance(accountNumber);
+		return ResponseEntity.ok(balance);
 	}
 	@GetMapping("/verify/{accountNumber}")
 	public ResponseEntity<Boolean> verifyAccountByAccountNumber(@PathVariable String accountNumber) {

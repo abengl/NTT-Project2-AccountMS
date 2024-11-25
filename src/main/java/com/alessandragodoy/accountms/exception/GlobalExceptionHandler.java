@@ -15,13 +15,20 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<String> handleInsufficientFundsException(InsufficientFundsException e) {
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
 	}
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<String> handleGeneralException(Exception e) {
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred. " + e.getMessage());
-	}
+
 	@ExceptionHandler(CustomerNotFoundException.class)
 	public ResponseEntity<String> handleCustomerNotFoundException(CustomerNotFoundException e) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+	}
+
+	@ExceptionHandler(ExternalServiceException.class)
+	public ResponseEntity<String> handleExternalServiceException(ExternalServiceException e) {
+		return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e.getMessage());
+	}
+
+	@ExceptionHandler(AccountValidationException.class)
+	public ResponseEntity<String> handleValidationException(AccountValidationException e) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 	}
 }
 

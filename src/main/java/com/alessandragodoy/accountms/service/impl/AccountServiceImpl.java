@@ -3,9 +3,7 @@ package com.alessandragodoy.accountms.service.impl;
 import com.alessandragodoy.accountms.controller.dto.AccountDTO;
 import com.alessandragodoy.accountms.controller.dto.AccountMapper;
 import com.alessandragodoy.accountms.controller.dto.CreateAccountDTO;
-import com.alessandragodoy.accountms.exception.AccountNotFoundException;
-import com.alessandragodoy.accountms.exception.CustomerNotFoundException;
-import com.alessandragodoy.accountms.exception.InsufficientFundsException;
+import com.alessandragodoy.accountms.exception.*;
 import com.alessandragodoy.accountms.model.entity.Account;
 import com.alessandragodoy.accountms.model.entity.AccountType;
 import com.alessandragodoy.accountms.repository.AccountRepository;
@@ -15,9 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
-import javax.validation.ValidationException;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,8 +39,9 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public Optional<AccountDTO> getAccountById(Integer accountId) {
-		return accountRepository.findById(accountId).map(AccountMapper::toDTO);
+	public AccountDTO getAccountById(Integer accountId) {
+		return accountRepository.findById(accountId).map(AccountMapper::toDTO)
+				.orElseThrow(() -> new AccountNotFoundException("Account not found for ID: " + accountId));
 	}
 
 	@Override
@@ -53,7 +52,7 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public AccountDTO createAccount(CreateAccountDTO createAccountDTO) {
 		if (!customerExists(createAccountDTO.customerId())) {
-			throw new ValidationException("Customer not found for ID: " + createAccountDTO.customerId());
+			throw new CustomerNotFoundException("Customer not found for ID: " + createAccountDTO.customerId());
 		}
 		Account newAccount = AccountMapper.toCreateEntity(createAccountDTO);
 		newAccount.setAccountNumber(generateAccountNumber());
@@ -63,18 +62,18 @@ public class AccountServiceImpl implements AccountService {
 
 	@Transactional
 	@Override
-	public Optional<AccountDTO> deposit(Integer accountId, Double amount) {
+	public AccountDTO deposit(Integer accountId, Double amount) {
 		validateAmount(amount);
 
 		Account account = findAccountByIdOrThrow(accountId);
 		accountRepository.updateBalanceDeposit(accountId, amount);
 		account.setBalance(accountRepository.getBalanceByAccountId(accountId));
-		return Optional.of(AccountMapper.toDTO(account));
+		return AccountMapper.toDTO(account);
 	}
 
 	@Transactional
 	@Override
-	public Optional<AccountDTO> withdraw(Integer accountId, Double amount) {
+	public AccountDTO withdraw(Integer accountId, Double amount) {
 		validateAmount(amount);
 
 		Account account = findAccountByIdOrThrow(accountId);
@@ -83,15 +82,15 @@ public class AccountServiceImpl implements AccountService {
 		validateSufficientFunds(account, currentBalance, amount);
 		accountRepository.updateBalanceWithdraw(accountId, amount);
 		account.setBalance(accountRepository.getBalanceByAccountId(accountId));
-		return Optional.of(AccountMapper.toDTO(account));
+		return AccountMapper.toDTO(account);
 	}
 
 	@Override
-	public Optional<AccountDTO> deleteAccountById(Integer accountId) {
+	public AccountDTO deleteAccountById(Integer accountId) {
 		return accountRepository.findById(accountId).map(existingAccount -> {
 			accountRepository.delete(existingAccount);
 			return AccountMapper.toDTO(existingAccount);
-		});
+		}).orElseThrow(() -> new AccountNotFoundException("Account not found for ID: " + accountId));
 	}
 
 
@@ -103,10 +102,10 @@ public class AccountServiceImpl implements AccountService {
 			if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
 				return response.getBody();
 			}
-		} catch (Exception e) {
-			System.out.println("Error calling customer-ms: " + e.getMessage());
+		} catch (ResourceAccessException e) {
+			throw new ExternalServiceException("Unable to connect to the customer service.");
 		}
-		throw new CustomerNotFoundException("Customer not found for ID: " + customerId);
+		throw new ExternalServiceException("Unexpected error occurred while checking customer accounts.");
 	}
 
 	private String generateAccountNumber() {
@@ -124,7 +123,7 @@ public class AccountServiceImpl implements AccountService {
 
 	private void validateAmount(Double amount) {
 		if (amount == null || amount <= 0) {
-			throw new ValidationException("Amount must be greater than zero.");
+			throw new AccountValidationException("Amount must be greater than zero.");
 		}
 	}
 
@@ -134,8 +133,11 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public Optional<Double> getAccountBalance(String accountNumber) {
-		return accountRepository.findByAccountNumber(accountNumber).map(Account::getBalance);
+	public Double getAccountBalance(String accountNumber) {
+		return accountRepository.findByAccountNumber(accountNumber)
+				.map(Account::getBalance)
+				.orElseThrow(() ->
+				new AccountNotFoundException("Account not found for number: " + accountNumber));
 	}
 
 	@Override

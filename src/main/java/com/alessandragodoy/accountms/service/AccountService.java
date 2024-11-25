@@ -31,7 +31,7 @@ public interface AccountService {
 	 * @param accountId the ID of the account
 	 * @return an optional containing the account DTO if found, or empty if not found
 	 */
-	Optional<AccountDTO> getAccountById(Integer accountId);
+	AccountDTO getAccountById(Integer accountId);
 
 	/**
 	 * Creates a new account.
@@ -48,7 +48,7 @@ public interface AccountService {
 	 * @param amount the amount to deposit
 	 * @return an optional containing the updated account DTO if the account is found, or empty if not found
 	 */
-	Optional<AccountDTO> deposit(Integer accountId, Double amount);
+	AccountDTO deposit(Integer accountId, Double amount);
 
 	/**
 	 * Withdraws an amount from an account.
@@ -57,7 +57,7 @@ public interface AccountService {
 	 * @param amount the amount to withdraw
 	 * @return an optional containing the updated account DTO if the account is found, or empty if not found
 	 */
-	Optional<AccountDTO> withdraw(Integer accountId, Double amount);
+	AccountDTO withdraw(Integer accountId, Double amount);
 
 	/**
 	 * Deletes an account by its ID.
@@ -65,9 +65,9 @@ public interface AccountService {
 	 * @param accountId the ID of the account
 	 * @return an optional containing the deleted account DTO if the account is found, or empty if not found
 	 */
-	Optional<AccountDTO> deleteAccountById(Integer accountId);
+	AccountDTO deleteAccountById(Integer accountId);
 
-	Optional<Double> getAccountBalance(String accountNumber);
+	Double getAccountBalance(String accountNumber);
 
 	boolean accountExistsByAccountNumber(String accountNumber);
 
