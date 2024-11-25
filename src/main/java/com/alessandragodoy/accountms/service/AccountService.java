@@ -4,7 +4,6 @@ import com.alessandragodoy.accountms.controller.dto.AccountDTO;
 import com.alessandragodoy.accountms.controller.dto.CreateAccountDTO;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Service interface for managing accounts.
