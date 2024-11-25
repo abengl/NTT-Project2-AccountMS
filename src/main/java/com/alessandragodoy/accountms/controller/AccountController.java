@@ -34,11 +34,6 @@ public class AccountController {
 		return ResponseEntity.ok(account);
 	}
 
-	@GetMapping("/customer/{customerId}")
-	public boolean getAccountByCustomerId(@PathVariable Integer customerId) {
-		return accountService.accountExists(customerId);
-	}
-
 	@PostMapping
 	public ResponseEntity<AccountDTO> createAccount(@RequestBody CreateAccountDTO createAccountDTO) {
 		AccountDTO account = accountService.createAccount(createAccountDTO);
@@ -63,6 +58,11 @@ public class AccountController {
 	public ResponseEntity<AccountDTO> deleteAccountById(@PathVariable Integer accountId) {
 		AccountDTO deletedAccount = accountService.deleteAccountById(accountId);
 		return ResponseEntity.ok(deletedAccount);
+	}
+
+	@GetMapping("/customer/{customerId}")
+	public boolean getAccountByCustomerId(@PathVariable Integer customerId) {
+		return accountService.accountExists(customerId);
 	}
 
 	@GetMapping("/balance/{accountNumber}")

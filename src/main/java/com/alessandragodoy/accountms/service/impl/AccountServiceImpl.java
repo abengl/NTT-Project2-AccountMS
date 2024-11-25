@@ -44,11 +44,6 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public boolean accountExists(Integer customerId) {
-		return accountRepository.existsByCustomerId(customerId);
-	}
-
-	@Override
 	public AccountDTO createAccount(CreateAccountDTO createAccountDTO) {
 		if (!customerExists(createAccountDTO.customerId())) {
 			throw new CustomerNotFoundException("Customer not found for ID: " + createAccountDTO.customerId());
@@ -93,7 +88,34 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 
+	@Override
+	public boolean accountExists(Integer customerId) {
+		return accountRepository.existsByCustomerId(customerId);
+	}
+
+	@Override
+	public Double getAccountBalance(String accountNumber) {
+		return accountRepository.findByAccountNumber(accountNumber)
+				.map(Account::getBalance)
+				.orElseThrow(() ->
+						new AccountNotFoundException("Account not found for number: " + accountNumber));
+	}
+
+	@Override
+	public boolean accountExistsByAccountNumber(String accountNumber) {
+		return accountRepository.existsByAccountNumber(accountNumber);
+	}
+
+	@Override
+	public void updateBalanceByAccountNumber(String accountNumber, Double amount) {
+		Account account = accountRepository.findByAccountNumber(accountNumber)
+				.orElseThrow(() -> new AccountNotFoundException("Account not found for number: " + accountNumber));
+		account.setBalance(account.getBalance() + amount);
+		accountRepository.save(account);
+	}
+
 	/* Helper methods */
+
 	private boolean customerExists(Integer customerId) {
 		String url = customerMsUrl + "/" + customerId;
 		try {
@@ -129,26 +151,5 @@ public class AccountServiceImpl implements AccountService {
 	private Account findAccountByIdOrThrow(Integer accountId) {
 		return accountRepository.findById(accountId)
 				.orElseThrow(() -> new AccountNotFoundException("Account not found for ID: " + accountId));
-	}
-
-	@Override
-	public Double getAccountBalance(String accountNumber) {
-		return accountRepository.findByAccountNumber(accountNumber)
-				.map(Account::getBalance)
-				.orElseThrow(() ->
-				new AccountNotFoundException("Account not found for number: " + accountNumber));
-	}
-
-	@Override
-	public boolean accountExistsByAccountNumber(String accountNumber) {
-		return accountRepository.existsByAccountNumber(accountNumber);
-	}
-
-	@Override
-	public void updateBalanceByAccountNumber(String accountNumber, Double amount) {
-		Account account = accountRepository.findByAccountNumber(accountNumber)
-				.orElseThrow(() -> new AccountNotFoundException("Account not found for number: " + accountNumber));
-		account.setBalance(account.getBalance() + amount);
-		accountRepository.save(account);
 	}
 }
