@@ -87,7 +87,7 @@ public class AccountServiceImpl implements AccountService {
 		}).orElseThrow(() -> new AccountNotFoundException("Account not found for ID: " + accountId));
 	}
 
-
+	/* Customer MS and Transaction MS custom methods */
 	@Override
 	public boolean accountExists(Integer customerId) {
 		return accountRepository.existsByCustomerId(customerId);
@@ -115,24 +115,6 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	/* Helper methods */
-
-	private boolean customerExists(Integer customerId) {
-		String url = customerMsUrl + "/" + customerId;
-		try {
-			ResponseEntity<Boolean> response = restTemplate.getForEntity(url, Boolean.class);
-			if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-				return response.getBody();
-			}
-		} catch (ResourceAccessException e) {
-			throw new ExternalServiceException("Unable to connect to the customer service.");
-		}
-		throw new ExternalServiceException("Unexpected error occurred while checking customer accounts.");
-	}
-
-	private String generateAccountNumber() {
-		return "A" + (System.currentTimeMillis() / 100);
-	}
-
 	private void validateSufficientFunds(Account account, Double currentBalance, Double amount) {
 		if (account.getAccountType() == AccountType.SAVINGS && currentBalance < amount) {
 			throw new InsufficientFundsException("Insufficient funds for withdrawal.");
@@ -151,5 +133,22 @@ public class AccountServiceImpl implements AccountService {
 	private Account findAccountByIdOrThrow(Integer accountId) {
 		return accountRepository.findById(accountId)
 				.orElseThrow(() -> new AccountNotFoundException("Account not found for ID: " + accountId));
+	}
+
+	private boolean customerExists(Integer customerId) {
+		String url = customerMsUrl + "/" + customerId;
+		try {
+			ResponseEntity<Boolean> response = restTemplate.getForEntity(url, Boolean.class);
+			if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+				return response.getBody();
+			}
+		} catch (ResourceAccessException e) {
+			throw new ExternalServiceException("Unable to connect to the customer service.");
+		}
+		throw new ExternalServiceException("Unexpected error occurred while checking customer accounts.");
+	}
+
+	private String generateAccountNumber() {
+		return "A" + (System.currentTimeMillis() / 100);
 	}
 }
