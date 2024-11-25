@@ -44,7 +44,7 @@ public interface AccountService {
 	 * Deposits an amount into an account.
 	 *
 	 * @param accountId the ID of the account
-	 * @param amount the amount to deposit
+	 * @param amount    the amount to deposit
 	 * @return an optional containing the updated account DTO if the account is found, or empty if not found
 	 */
 	AccountDTO deposit(Integer accountId, Double amount);
@@ -53,7 +53,7 @@ public interface AccountService {
 	 * Withdraws an amount from an account.
 	 *
 	 * @param accountId the ID of the account
-	 * @param amount the amount to withdraw
+	 * @param amount    the amount to withdraw
 	 * @return an optional containing the updated account DTO if the account is found, or empty if not found
 	 */
 	AccountDTO withdraw(Integer accountId, Double amount);
