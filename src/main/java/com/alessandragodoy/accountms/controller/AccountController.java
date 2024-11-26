@@ -22,8 +22,6 @@ import java.util.List;
 public class AccountController {
 	private final AccountService accountService;
 
-	// Account MS CRUD endpoints
-
 	/**
 	 * Retrieves all accounts.
 	 *

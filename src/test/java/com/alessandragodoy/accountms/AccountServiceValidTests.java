@@ -2,9 +2,10 @@ package com.alessandragodoy.accountms;
 
 import com.alessandragodoy.accountms.controller.dto.AccountDTO;
 import com.alessandragodoy.accountms.controller.dto.CreateAccountDTO;
-import com.alessandragodoy.accountms.model.entity.Account;
-import com.alessandragodoy.accountms.model.entity.AccountType;
+import com.alessandragodoy.accountms.model.Account;
+import com.alessandragodoy.accountms.model.AccountType;
 import com.alessandragodoy.accountms.repository.AccountRepository;
+import com.alessandragodoy.accountms.service.AccountServiceClient;
 import com.alessandragodoy.accountms.service.impl.AccountServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,10 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,10 +35,7 @@ class AccountServiceValidTests {
 	@Mock
 	private AccountRepository accountRepository;
 	@Mock
-	private RestTemplate restTemplate;
-
-	@Value("${customer.ms.url}")
-	private String customerMsUrl;
+	private AccountServiceClient accountServiceClient;
 
 	@BeforeEach
 	public void setUp() {
@@ -99,11 +93,7 @@ class AccountServiceValidTests {
 				.customerId(customerId)
 				.build();
 
-		String url = customerMsUrl + "/" + customerId;
-		ResponseEntity<Boolean> responseEntity = new ResponseEntity<>(true, HttpStatus.OK);
-
-		when(restTemplate.getForEntity(url, Boolean.class))
-				.thenReturn(responseEntity);
+		when(accountServiceClient.customerExists(customerId)).thenReturn(true);
 		when(accountRepository.save(any(Account.class))).thenReturn(newAccount);
 
 		// Act

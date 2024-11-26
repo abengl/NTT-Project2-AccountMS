@@ -1,7 +1,7 @@
 package com.alessandragodoy.accountms.controller.dto;
 
-import com.alessandragodoy.accountms.model.entity.Account;
-import com.alessandragodoy.accountms.model.entity.AccountType;
+import com.alessandragodoy.accountms.model.Account;
+import com.alessandragodoy.accountms.model.AccountType;
 
 /**
  * Mapper class for converting between Account entities and DTOs.

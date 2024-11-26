@@ -1,8 +1,8 @@
 package com.alessandragodoy.accountms;
 
 import com.alessandragodoy.accountms.exception.AccountNotFoundException;
-import com.alessandragodoy.accountms.model.entity.Account;
-import com.alessandragodoy.accountms.model.entity.AccountType;
+import com.alessandragodoy.accountms.model.Account;
+import com.alessandragodoy.accountms.model.AccountType;
 import com.alessandragodoy.accountms.repository.AccountRepository;
 import com.alessandragodoy.accountms.service.impl.AccountServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,8 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +27,6 @@ class AccountServiceMicroserviceTests {
 	private AccountServiceImpl accountService;
 	@Mock
 	private AccountRepository accountRepository;
-	@Mock
-	private RestTemplate restTemplate;
-
-	@Value("${customer.ms.url}")
-	private String customerMsUrl;
 
 	@BeforeEach
 	public void setUp() {
@@ -84,9 +77,7 @@ class AccountServiceMicroserviceTests {
 		when(accountRepository.findByAccountNumber(account.getAccountNumber())).thenReturn(Optional.empty());
 
 		// Act & Assert
-		AccountNotFoundException exception = assertThrows(AccountNotFoundException.class, () -> {
-			accountService.getAccountBalance(account.getAccountNumber());
-		});
+		AccountNotFoundException exception = assertThrows(AccountNotFoundException.class, () -> accountService.getAccountBalance(account.getAccountNumber()));
 		assertEquals("Account not found for number: " + account.getAccountNumber(), exception.getMessage());
 	}
 
@@ -130,9 +121,7 @@ class AccountServiceMicroserviceTests {
 		when(accountRepository.findByAccountNumber(account.getAccountNumber())).thenReturn(Optional.empty());
 
 		// Act & Assert
-		AccountNotFoundException exception = assertThrows(AccountNotFoundException.class, () -> {
-			accountService.getAccountBalance(account.getAccountNumber());
-		});
+		AccountNotFoundException exception = assertThrows(AccountNotFoundException.class, () -> accountService.getAccountBalance(account.getAccountNumber()));
 		assertEquals("Account not found for number: " + account.getAccountNumber(), exception.getMessage());
 	}
 

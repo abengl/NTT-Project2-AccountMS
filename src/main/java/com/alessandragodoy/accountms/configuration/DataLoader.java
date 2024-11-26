@@ -1,7 +1,7 @@
 package com.alessandragodoy.accountms.configuration;
 
-import com.alessandragodoy.accountms.model.entity.Account;
-import com.alessandragodoy.accountms.model.entity.AccountType;
+import com.alessandragodoy.accountms.model.Account;
+import com.alessandragodoy.accountms.model.AccountType;
 import com.alessandragodoy.accountms.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;

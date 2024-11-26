@@ -1,6 +1,6 @@
 package com.alessandragodoy.accountms.repository;
 
-import com.alessandragodoy.accountms.model.entity.Account;
+import com.alessandragodoy.accountms.model.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

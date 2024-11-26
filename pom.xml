@@ -156,10 +156,10 @@
                         </goals>
                         <configuration>
                             <excludes>
-                                <!-- Exclude configuration classes -->
-                                <exclude>com/alessandragodoy/accountms/configuration/**</exclude>
-                                <!-- Exclude main application class -->
-                                <exclude>com/alessandragodoy/accountms/CustomerMsApplication*</exclude>
+                                <exclude>src/main/java/com/alessandragodoy/accountms/configuration/**</exclude>
+                                <exclude>src/main/java/com/alessandragodoy/accountms/exception/**</exclude>
+                                <exclude>src/main/java/com/alessandragodoy/accountms/utility/**</exclude>
+                                <exclude>src/main/java/com/alessandragodoy/accountms/CustomerMsApplication*</exclude>
                             </excludes>
                         </configuration>
                     </execution>

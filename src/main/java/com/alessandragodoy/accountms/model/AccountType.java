@@ -1,4 +1,4 @@
-package com.alessandragodoy.accountms.model.entity;
+package com.alessandragodoy.accountms.model;
 
 /**
  * Enum representing the types of accounts.
