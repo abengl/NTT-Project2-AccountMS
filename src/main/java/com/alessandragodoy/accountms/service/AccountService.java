@@ -2,22 +2,17 @@ package com.alessandragodoy.accountms.service;
 
 import com.alessandragodoy.accountms.controller.dto.AccountDTO;
 import com.alessandragodoy.accountms.controller.dto.CreateAccountDTO;
+import com.alessandragodoy.accountms.exception.AccountNotFoundException;
+import com.alessandragodoy.accountms.exception.AccountValidationException;
+import com.alessandragodoy.accountms.exception.CustomerNotFoundException;
+import com.alessandragodoy.accountms.exception.InsufficientFundsException;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Service interface for managing accounts.
  */
 public interface AccountService {
-	/**
-	 * Checks if an account exists for a given customer ID.
-	 *
-	 * @param customerId the ID of the customer
-	 * @return true if an account exists, false otherwise
-	 */
-	boolean accountExists(Integer customerId);
-
 	/**
 	 * Retrieves all accounts.
 	 *
@@ -29,15 +24,17 @@ public interface AccountService {
 	 * Retrieves an account by its ID.
 	 *
 	 * @param accountId the ID of the account
-	 * @return an optional containing the account DTO if found, or empty if not found
+	 * @return the account DTO if found
+	 * @throws AccountNotFoundException if the account is not found
 	 */
-	Optional<AccountDTO> getAccountById(Integer accountId);
+	AccountDTO getAccountById(Integer accountId);
 
 	/**
 	 * Creates a new account.
 	 *
 	 * @param createAccountDTO the DTO containing account creation details
 	 * @return the created account DTO
+	 * @throws CustomerNotFoundException if the customer is not found
 	 */
 	AccountDTO createAccount(CreateAccountDTO createAccountDTO);
 
@@ -45,25 +42,65 @@ public interface AccountService {
 	 * Deposits an amount into an account.
 	 *
 	 * @param accountId the ID of the account
-	 * @param amount the amount to deposit
-	 * @return an optional containing the updated account DTO if the account is found, or empty if not found
+	 * @param amount    the amount to deposit
+	 * @return the updated account DTO
+	 * @throws AccountNotFoundException   if the account is not found
+	 * @throws AccountValidationException if the amount is invalid
 	 */
-	Optional<AccountDTO> deposit(Integer accountId, Double amount);
+	AccountDTO deposit(Integer accountId, Double amount);
 
 	/**
 	 * Withdraws an amount from an account.
 	 *
 	 * @param accountId the ID of the account
-	 * @param amount the amount to withdraw
-	 * @return an optional containing the updated account DTO if the account is found, or empty if not found
+	 * @param amount    the amount to withdraw
+	 * @return the updated account DTO
+	 * @throws AccountNotFoundException   if the account is not found
+	 * @throws AccountValidationException if the amount is invalid
+	 * @throws InsufficientFundsException if there are insufficient funds for the withdrawal
 	 */
-	Optional<AccountDTO> withdraw(Integer accountId, Double amount);
+	AccountDTO withdraw(Integer accountId, Double amount);
 
 	/**
 	 * Deletes an account by its ID.
 	 *
 	 * @param accountId the ID of the account
-	 * @return an optional containing the deleted account DTO if the account is found, or empty if not found
+	 * @return the deleted account DTO
+	 * @throws AccountNotFoundException if the account is not found
 	 */
-	Optional<AccountDTO> deleteAccountById(Integer accountId);
+	AccountDTO deleteAccountById(Integer accountId);
+
+	/**
+	 * Checks if an account exists for a given customer ID.
+	 *
+	 * @param customerId the ID of the customer
+	 * @return true if an account exists, false otherwise
+	 */
+	boolean accountExists(Integer customerId);
+
+	/**
+	 * Retrieves the balance of an account by its account number.
+	 *
+	 * @param accountNumber the account number
+	 * @return the balance of the account
+	 * @throws AccountNotFoundException if the account is not found
+	 */
+	Double getAccountBalance(String accountNumber);
+
+	/**
+	 * Checks if an account exists by its account number.
+	 *
+	 * @param accountNumber the account number
+	 * @return true if an account exists, false otherwise
+	 */
+	boolean accountExistsByAccountNumber(String accountNumber);
+
+	/**
+	 * Updates the balance of an account by its account number.
+	 *
+	 * @param accountNumber the account number
+	 * @param amount        the amount to update the balance by
+	 * @throws AccountNotFoundException if the account is not found
+	 */
+	void updateBalanceByAccountNumber(String accountNumber, Double amount);
 }

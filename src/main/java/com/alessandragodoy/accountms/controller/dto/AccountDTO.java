@@ -1,6 +1,6 @@
 package com.alessandragodoy.accountms.controller.dto;
 
-import com.alessandragodoy.accountms.model.entity.AccountType;
+import com.alessandragodoy.accountms.model.AccountType;
 
 /**
  * Data Transfer Object for Account.
