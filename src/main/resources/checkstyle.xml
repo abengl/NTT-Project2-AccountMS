@@ -30,6 +30,26 @@
         <module name="StaticVariableName"/>
         <module name="TypeName"/>
 
+        <!-- Code Quality -->
+        <module name="CyclomaticComplexity">
+            <property name="max" value="10"/>
+        </module>
+        <module name="NPathComplexity">
+            <property name="max" value="200"/>
+        </module>
+        <module name="BooleanExpressionComplexity">
+            <property name="max" value="5"/>
+        </module>
+        <module name="ClassFanOutComplexity">
+            <property name="max" value="20"/>
+        </module>
+        <module name="NestedForDepth">
+            <property name="max" value="3"/>
+        </module>
+        <module name="NestedIfDepth">
+            <property name="max" value="3"/>
+        </module>
+
         <!-- Code Structure -->
         <module name="MethodLength">
             <property name="max" value="50"/>
@@ -43,6 +63,7 @@
             <property name="basicOffset" value="4"/>
             <property name="tabWidth" value="4"/>
         </module>
+        <module name="WhitespaceAfter"/>
 
         <!-- Javadoc -->
         <module name="JavadocType"/>
