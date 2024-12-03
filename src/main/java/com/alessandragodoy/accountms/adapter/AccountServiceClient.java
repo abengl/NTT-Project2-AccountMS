@@ -1,4 +1,4 @@
-package com.alessandragodoy.accountms.service;
+package com.alessandragodoy.accountms.adapter;
 
 import com.alessandragodoy.accountms.exception.ExternalServiceException;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +9,9 @@ import org.springframework.web.client.RestTemplate;
 
 /**
  * Client for interacting with the Customer Microservice.
+ * <p>
+ * This class uses the <b>Singleton design pattern</b> to ensure that only one instance of the client exists.
+ * </p>
  */
 @Component
 public class AccountServiceClient {
@@ -19,6 +22,15 @@ public class AccountServiceClient {
 		this.restTemplate = restTemplate;
 		this.customerMsUrl = customerMsUrl;
 	}
+
+
+	/**
+	 * Checks if a customer exists by their ID.
+	 *
+	 * @param customerId the ID of the customer to check
+	 * @return true if the customer exists, false otherwise
+	 * @throws ExternalServiceException if unable to connect to the customer service
+	 */
 	public boolean customerExists(Integer customerId) {
 		String url = customerMsUrl + "/" + customerId;
 		try {

@@ -5,8 +5,9 @@ import com.alessandragodoy.accountms.controller.dto.CreateAccountDTO;
 import com.alessandragodoy.accountms.model.Account;
 import com.alessandragodoy.accountms.model.AccountType;
 import com.alessandragodoy.accountms.repository.AccountRepository;
-import com.alessandragodoy.accountms.service.AccountServiceClient;
 import com.alessandragodoy.accountms.service.impl.AccountServiceImpl;
+import com.alessandragodoy.accountms.utility.AccountNumberGenerator;
+import com.alessandragodoy.accountms.utility.AccountValidation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,9 @@ class AccountServiceValidTests {
 	@Mock
 	private AccountRepository accountRepository;
 	@Mock
-	private AccountServiceClient accountServiceClient;
+	private AccountValidation accountValidation;
+	@Mock
+	private AccountNumberGenerator accountNumberGenerator;
 
 	@BeforeEach
 	public void setUp() {
@@ -93,7 +96,9 @@ class AccountServiceValidTests {
 				.customerId(customerId)
 				.build();
 
-		when(accountServiceClient.customerExists(customerId)).thenReturn(true);
+		doNothing().when(accountValidation).validateAccountData(accountRequest);
+		doNothing().when(accountValidation).validateCustomerExists(customerId);
+		when(accountNumberGenerator.generate()).thenReturn("A00001");
 		when(accountRepository.save(any(Account.class))).thenReturn(newAccount);
 
 		// Act

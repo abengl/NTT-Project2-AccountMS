@@ -4,6 +4,8 @@ import com.alessandragodoy.accountms.model.Account;
 import com.alessandragodoy.accountms.model.AccountType;
 import com.alessandragodoy.accountms.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -17,22 +19,23 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DataLoader implements CommandLineRunner {
 	private final AccountRepository accountRepository;
+	private static final Logger LOGGER = LoggerFactory.getLogger(DataLoader.class);
 
 	@Override
 	public void run(String... args) {
 		if (accountRepository.count() == 0) {
-			System.out.println("No accounts found, creating initial accounts...");
+			LOGGER.info("No accounts found, creating initial accounts...");
 			List<Account> initialAccounts =List.of(
 					Account.builder().accountNumber("A00000000001").balance(1000.0).accountType(AccountType.SAVINGS).customerId(1).build(),
-					Account.builder().accountNumber("A00000000002").balance(1000.0).accountType(AccountType.CHECKING).customerId(1).build(),
-					Account.builder().accountNumber("A00000000003").balance(1000.0).accountType(AccountType.SAVINGS).customerId(2).build(),
-					Account.builder().accountNumber("A00000000004").balance(1000.0).accountType(AccountType.CHECKING).customerId(3).build(),
+					Account.builder().accountNumber("A00000000002").balance(1000.0).accountType(AccountType.CHECKING).customerId(2).build(),
+					Account.builder().accountNumber("A00000000003").balance(1000.0).accountType(AccountType.SAVINGS).customerId(3).build(),
+					Account.builder().accountNumber("A00000000004").balance(1000.0).accountType(AccountType.CHECKING).customerId(4).build(),
 					Account.builder().accountNumber("A00000000005").balance(1000.0).accountType(AccountType.SAVINGS).customerId(5).build()
 			);
 			accountRepository.saveAll(initialAccounts);
-			System.out.println("Initial accounts added to the database.");
+			LOGGER.info("Initial accounts added to the database.");
 		} else {
-			System.out.println("Accounts already exist, skipping initialization.");
+			LOGGER.info("Accounts already exist, skipping initialization.");
 		}
 	}
 }

@@ -1,11 +1,15 @@
-package com.alessandragodoy.accountms.controller.dto;
+package com.alessandragodoy.accountms.utility;
 
+import com.alessandragodoy.accountms.controller.dto.AccountDTO;
+import com.alessandragodoy.accountms.controller.dto.CreateAccountDTO;
 import com.alessandragodoy.accountms.model.Account;
 import com.alessandragodoy.accountms.model.AccountType;
+import org.springframework.stereotype.Component;
 
 /**
  * Mapper class for converting between Account entities and DTOs.
  */
+@Component
 public class AccountMapper {
 	public static AccountDTO toDTO(Account account) {
 		return new AccountDTO(
@@ -14,16 +18,6 @@ public class AccountMapper {
 				account.getBalance(),
 				account.getAccountType(),
 				account.getCustomerId()
-		);
-	}
-
-	public static Account toEntity(AccountDTO accountDTO) {
-		return new Account(
-				accountDTO.accountId(),
-				accountDTO.accountNumber(),
-				accountDTO.balance(),
-				accountDTO.accountType(),
-				accountDTO.customerId()
 		);
 	}
 

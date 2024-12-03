@@ -77,8 +77,10 @@ class AccountServiceMicroserviceTests {
 		when(accountRepository.findByAccountNumber(account.getAccountNumber())).thenReturn(Optional.empty());
 
 		// Act & Assert
-		AccountNotFoundException exception = assertThrows(AccountNotFoundException.class, () -> accountService.getAccountBalance(account.getAccountNumber()));
-		assertEquals("Account not found for number: " + account.getAccountNumber(), exception.getMessage());
+		AccountNotFoundException exception = assertThrows(AccountNotFoundException.class,
+				() -> accountService.getAccountBalance(account.getAccountNumber()));
+		assertEquals("Account " + account.getAccountNumber() + " not found, can not get balance.",
+				exception.getMessage());
 	}
 
 	@Test
@@ -121,8 +123,10 @@ class AccountServiceMicroserviceTests {
 		when(accountRepository.findByAccountNumber(account.getAccountNumber())).thenReturn(Optional.empty());
 
 		// Act & Assert
-		AccountNotFoundException exception = assertThrows(AccountNotFoundException.class, () -> accountService.getAccountBalance(account.getAccountNumber()));
-		assertEquals("Account not found for number: " + account.getAccountNumber(), exception.getMessage());
+		AccountNotFoundException exception = assertThrows(AccountNotFoundException.class,
+				() -> accountService.getAccountBalance(account.getAccountNumber()));
+		assertEquals("Account " + account.getAccountNumber() + " not found, can not get balance.",
+				exception.getMessage());
 	}
 
 }

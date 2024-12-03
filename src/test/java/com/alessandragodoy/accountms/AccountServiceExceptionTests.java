@@ -1,12 +1,15 @@
 package com.alessandragodoy.accountms;
 
 import com.alessandragodoy.accountms.controller.dto.CreateAccountDTO;
-import com.alessandragodoy.accountms.exception.*;
+import com.alessandragodoy.accountms.exception.AccountNotFoundException;
+import com.alessandragodoy.accountms.exception.AccountValidationException;
+import com.alessandragodoy.accountms.exception.CustomerNotFoundException;
+import com.alessandragodoy.accountms.exception.InsufficientFundsException;
 import com.alessandragodoy.accountms.model.Account;
 import com.alessandragodoy.accountms.model.AccountType;
 import com.alessandragodoy.accountms.repository.AccountRepository;
-import com.alessandragodoy.accountms.service.AccountServiceClient;
 import com.alessandragodoy.accountms.service.impl.AccountServiceImpl;
+import com.alessandragodoy.accountms.utility.AccountValidation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,8 +24,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for exception scenarios in the AccountService.
@@ -35,7 +37,7 @@ class AccountServiceExceptionTests {
 	@Mock
 	private AccountRepository accountRepository;
 	@Mock
-	private AccountServiceClient accountServiceClient;
+	private AccountValidation accountValidation;
 
 	@BeforeEach
 	public void setUp() {
@@ -62,7 +64,7 @@ class AccountServiceExceptionTests {
 				assertThrows(AccountNotFoundException.class, () -> accountService.getAccountById(accountId));
 
 		// Assert
-		assertEquals("Account not found for ID: " + accountId, exception.getMessage());
+		assertEquals("The account with ID " + accountId + " does not exist.", exception.getMessage());
 	}
 
 	@Test
@@ -71,30 +73,15 @@ class AccountServiceExceptionTests {
 		// Arrange
 		int customerId = 10;
 		CreateAccountDTO accountRequest = new CreateAccountDTO(1000.0, "SAVINGS", customerId);
-
-		when(accountServiceClient.customerExists(customerId)).thenReturn(false);
+		doNothing().when(accountValidation).validateAccountData(accountRequest);
+		doThrow(new CustomerNotFoundException("Customer not found for ID: " + customerId)).when(accountValidation)
+				.validateCustomerExists(customerId);
 
 		// Act & Assert
 		CustomerNotFoundException exception = assertThrows(CustomerNotFoundException.class,
 				() -> accountService.createAccount(accountRequest));
 		assertEquals("Customer not found for ID: " + customerId, exception.getMessage());
 
-	}
-
-	@Test
-	@DisplayName("Test createAccount method - it returns ExternalServiceException when customer service is " +
-			"unavailable")
-	void CustomerService_createAccount_ReturnsExceptionUnavailable() {
-		// Arrange
-		int customerId = 1;
-		CreateAccountDTO accountRequest = new CreateAccountDTO(1000.0, "SAVINGS", customerId);
-
-		doThrow(new ExternalServiceException("Unable to connect to the customer service.")).when(accountServiceClient).customerExists(customerId);
-
-		// Act & Assert
-		ExternalServiceException exception = assertThrows(ExternalServiceException.class,
-				() -> accountService.createAccount(accountRequest));
-		assertEquals("Unable to connect to the customer service.", exception.getMessage());
 	}
 
 	@Test
@@ -121,7 +108,7 @@ class AccountServiceExceptionTests {
 		// Act & Assert
 		AccountNotFoundException exception = assertThrows(AccountNotFoundException.class,
 				() -> accountService.deposit(accountId, amount));
-		assertEquals("Account not found for ID: " + accountId, exception.getMessage());
+		assertEquals("Deposit can not continue. Account not found for ID: " + accountId, exception.getMessage());
 	}
 
 	@Test
@@ -167,6 +154,6 @@ class AccountServiceExceptionTests {
 		// Act & Assert
 		AccountNotFoundException exception = assertThrows(AccountNotFoundException.class,
 				() -> accountService.deleteAccountById(accountId));
-		assertEquals("Account not found for ID: " + accountId, exception.getMessage());
+		assertEquals("Delete stopped. Account not found for ID: " + accountId, exception.getMessage());
 	}
 }

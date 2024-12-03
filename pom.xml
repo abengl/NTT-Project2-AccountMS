@@ -61,6 +61,21 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- JUnit dependency -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.9.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Mockito dependency -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.0.0</version>
+            <scope>test</scope>
+        </dependency>
+
         <!--Swagger-->
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -118,6 +133,31 @@
                 </configuration>
             </plugin>
 
+
+            <!--OpenAPI-->
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>5.1.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/openapi.yml</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <apiPackage>com.alessandragodoy.accountms.api</apiPackage>
+                            <modelPackage>com.alessandragodoy.accountms.model</modelPackage>
+                            <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
+                            <configOptions>
+                                <delegatePattern>true</delegatePattern>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- Checkstyle -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -156,10 +196,14 @@
                         </goals>
                         <configuration>
                             <excludes>
-                                <exclude>src/main/java/com/alessandragodoy/accountms/configuration/**</exclude>
-                                <exclude>src/main/java/com/alessandragodoy/accountms/exception/**</exclude>
-                                <exclude>src/main/java/com/alessandragodoy/accountms/utility/**</exclude>
-                                <exclude>src/main/java/com/alessandragodoy/accountms/CustomerMsApplication*</exclude>
+                                <exclude>**/com/alessandragodoy/accountms/configuration/**</exclude>
+                                <exclude>**/com/alessandragodoy/accountms/exception/**</exclude>
+                                <exclude>**/com/alessandragodoy/accountms/utility/**</exclude>
+                                <exclude>**/com/alessandragodoy/accountms/adapter/**</exclude>
+                                <exclude>**/com/alessandragodoy/accountms/model/**</exclude>
+                                <exclude>**/com/alessandragodoy/accountms/api/**</exclude>
+                                <exclude>**/com/alessandragodoy/accountms/model/AccountDTO*</exclude>
+                                <exclude>**/com/alessandragodoy/accountms/CustomerMsApplication*</exclude>
                             </excludes>
                         </configuration>
                     </execution>
